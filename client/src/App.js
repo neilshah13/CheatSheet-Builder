@@ -25,13 +25,24 @@ class App extends Component {
             for (let i = 0; i < this.state.selectedFiles.length; i++) {
                 data.append('file', this.state.selectedFiles[i]);
             }
+            console.log(this.state.selectedFiles)
 
             axios.post('http://localhost:5000/upload', data)
                 .then(res => {
                     console.log(res.statusText)
                 })
-        }
 
+            //Split into functions
+            //Hardcoded so far
+            const data_image = {"Image1": [787,444], "Image2": [638,359],"Image3": [512,320]}
+            
+            //test input to coordinates retrieval for images
+            axios.post('http://localhost:5000/get_final_coordinates', data_image)
+            .then(res => {
+                console.log(res)
+                //res.data
+            })
+        }
     }
 
 

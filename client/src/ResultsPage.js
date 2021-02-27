@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { Component } from 'react';
 import RingLoader from "react-spinners/RingLoader";
-import { Document, Page, pdfjs } from 'react-pdf'rmdir.git
+import { Document, Page, pdfjs } from 'react-pdf'
 import testPDF from "./e-final-coverpage.pdf"// debugging purposes
 
 class ResultsPage extends Component {
