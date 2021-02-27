@@ -3,6 +3,8 @@ import axios from "axios";
 import React, { Component } from 'react';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
+import { Button, Card } from 'ui-neumorphism'
+import 'ui-neumorphism/dist/index.css'
 
 
 class App extends Component {
@@ -81,25 +83,25 @@ class App extends Component {
         return (
 
             <header className="App-header">
-                <label for='uploadButton' class="custom-file-upload">
-                    Upload Images Here
-                        </label>
                 <input
-                    id='uploadButton'
+                    ref="fileInput"
                     type='file'
                     multiple
                     onChange={this.selectFiles}
                     accept="image/jpeg, image/png"
+                    style={{ display: "none" }}
                 />
+                <Button onClick={() => this.refs.fileInput.click()} class="custom-file-upload">
+                    Upload Images Here
+                </Button>
                 <br />
-
                 <div id='filesContainer'>
                     {this.filePreview()}
                 </div>
 
 
                 <br />
-                <button type='submit' onClick={this.fileSubmit}>Create my cheatsheet</button>
+                <Button size='large' rounded color='var(--primary)' type='submit' onClick={this.fileSubmit}>Create my cheatsheet</Button>
             </header>
 
         )

@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import './Preview.css';
+import { Button, Card } from 'ui-neumorphism'
+import 'ui-neumorphism/dist/index.css'
 
 
 const Preview = (props) => {
@@ -6,16 +9,11 @@ const Preview = (props) => {
         const imgUrl = URL.createObjectURL(val[0])
         const fileName = val[1]
         return (
-            <>
-                <section class="previewContainer">
-                    <img src={imgUrl}></img>
-                    <p>File Name: {fileName}</p>
-
-                </section>
-            </>
+            <Card>
+                <img className="previewContainer" src={imgUrl}></img>
+            </Card>
         )
     })
-
 }
 
 
