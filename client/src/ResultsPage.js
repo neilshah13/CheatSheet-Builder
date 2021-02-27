@@ -43,7 +43,13 @@ class ResultsPage extends Component {
                 console.log(error);
             });
     };
-
+    cleanUp = () => {
+        axios.get(`http://localhost:5000/get_user/${this.state.user_id}`)
+            .then(response => {
+                console.log("Deleted...")
+            })
+        this.props.history.replace('/');
+    }
     componentDidMount = () => {
         this.setState({
             user_id: this.props.match.params.user_id,
@@ -98,7 +104,10 @@ class ResultsPage extends Component {
                         </div>
                         :
                         <p>no res</p>
+
                     }
+                    <button onClick={this.cleanUp}>go back</button>
+
                 </div>
             </>
 
