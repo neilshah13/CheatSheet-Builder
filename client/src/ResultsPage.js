@@ -22,6 +22,28 @@ class ResultsPage extends Component {
         axios.get('http://localhost:5000/results')
     }
 
+
+    viewHandler = async () => {
+        axios(`http://localhost:4000/pdf`, {
+            method: "GET",
+            responseType: "blob"
+            //Force to receive data in a Blob Format
+        })
+            .then(response => {
+                //Create a Blob from the PDF Stream
+                const file = new Blob([response.data], {
+                    type: "application/pdf"
+                });
+                //Build a URL from the file
+                const fileURL = URL.createObjectURL(file);
+                //Open the URL on new Window
+                window.open(fileURL);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
+
     componentDidMount = () => {
         this.setState({
             user_id: this.state.history,
@@ -29,30 +51,27 @@ class ResultsPage extends Component {
             previewPDF: false
         });
 
-        axios.get("http://localhost:5000/results")
-            .then(response => {
-
-                this.setState({
-                    results: response.data,
-                    previewPDF: true,
-                    isLoading: false
-                })
-                console.log(response)
-
-
-            }).catch(error => console.error(error)).then(() => {
-                console.log(this.state.results)
+        axios(`http://localhost:5000/results`, {
+            method: "GET",
+            responseType: "blob"
+            //Force to receive data in a Blob Format
+        }).then(response => {
+            //Create a Blob from the PDF Stream
+            const file = new Blob([response.data], {
+                type: "application/pdf"
+            });
+            //Build a URL from the file
+            const fileURL = URL.createObjectURL(file);
+            console.log("fileURL")
+            console.log(fileURL)
+            this.setState({
+                results: fileURL,
+                previewPDF: true,
+                isLoading: false
             })
-
-
-        // debugging purposes
-        // this.setState({
-        //     previewPDF: true,
-        //     isLoading: false,
-        //     results: testPDF
-        // })
-        // console.log(testPDF)
-        // debugging purposes
+        }).catch(error => {
+            console.log(error);
+        });
     }
 
     render() {
@@ -66,7 +85,7 @@ class ResultsPage extends Component {
                 <div>
                     {this.state.previewPDF ?
                         <div>
-                            <Document file={testPDF} onLoadError={console.error}>
+                            <Document file={this.state.results} onLoadError={console.error}>
                                 Armin is cutest
                                 <Page pageNumber={1} />
                             </Document>
