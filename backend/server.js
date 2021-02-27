@@ -205,11 +205,14 @@ app.get("/get_user/:user_id", (req, res) => {
 })
 
 app.get("/results/:user_id", (req, res) => {
-    var file = fs.createReadStream(`./pdfs/${req.params.user_id}_Armin.pdf`);
+    var file = fs.createReadStream(`./pdfs/${req.params.user_id}_results.pdf`);
     file.pipe(res);
 });
 
+app.get("/download/:user_id", (req, res) => {
+    res.download(`./pdfs/${req.params.user_id}_results.pdf`)
 
+})
 
 
 app.set("view engine", "ejs");
