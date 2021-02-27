@@ -35,22 +35,11 @@ app.post('/upload', function (req, res) {
     })
 });
 
-app.get('/results', function (req, res) {
-
-    // defined file is for debugging
-    var filePath = "./pdfs/e-final-coverpage.pdf"
-    //
-    let resultPDF = fs.readFileSync(filePath);
-    res.contentType("application/pdf");
-    res.send(resultPDF)
-
-
-    // var resultPDF = fs.readFile(filePath,
-    //     function (err, data) {
-    //         res.contentType("application/pdf");
-    //         res.status(200).send(data);
-    //     });
+app.get("/results", (req, res) => {
+    var file = fs.createReadStream("./pdfs/e-final-coverpage.pdf");
+    file.pipe(res);
 });
+
 
 app.set("view engine", "ejs");
 
