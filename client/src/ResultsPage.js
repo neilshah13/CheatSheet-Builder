@@ -46,10 +46,11 @@ class ResultsPage extends Component {
 
     componentDidMount = () => {
         this.setState({
-            user_id: this.state.history,
+            user_id: this.props.match.params.user_id,
             isLoading: true,
             previewPDF: false
         });
+
 
         axios(`http://localhost:5000/results`, {
             method: "GET",
@@ -72,6 +73,11 @@ class ResultsPage extends Component {
         }).catch(error => {
             console.log(error);
         });
+
+        axios.get(`http://localhost:5000/get_file_names/${this.state.user_id}`)
+            .then(response => {
+                console.log(response)
+            })
     }
 
     render() {

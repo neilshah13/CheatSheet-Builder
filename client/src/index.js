@@ -25,7 +25,7 @@ const routing = (
     <Router>
       <Switch>
         <Route exact path='/' component={App} />
-        <Route path='/results' component={ResultsPage} />
+        <Route path='/results/:user_id' component={ResultsPage} />
       </Switch>
 
     </Router>

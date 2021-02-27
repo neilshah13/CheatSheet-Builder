@@ -73,7 +73,7 @@ class App extends Component {
         // follows after user has selected image files (this.uploadFiles).
         // takes all input images and pass into algo; 
         // re-route to results page; loading screen while waiting for algo to run
-        this.props.history.push('/results')
+        this.props.history.push(`/results/${this.state.user_id}`)
     }
 
     render() {

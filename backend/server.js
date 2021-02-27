@@ -17,7 +17,8 @@ const jsPDF = require("jspdf")
 //const require = createRequire(import.meta.url);
 const mergeImages = require('merge-images');
 const { Canvas, Image } = require('canvas');
-var glob = require("glob")
+var glob = require("glob");
+const { reset } = require("nodemon");
 
 
 class Rect {
@@ -172,6 +173,19 @@ app.post('/upload/:user_id', function (req, res) {
         }
         return res.status(200).send(req.file)
     })
+});
+
+app.get("/get_file_names/:user_id", (req, res) => {
+    var file_list = glob(`public/${req.params.user_id}_*.+(jpg|png)`, options = { nocase: true }
+        , function (err, files) {
+            if (err) {
+                console.log(err)
+            } else {
+                res.send(files)
+            }
+        })
+
+
 });
 
 app.get("/results", (req, res) => {
