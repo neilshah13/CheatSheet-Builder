@@ -184,17 +184,32 @@ app.get("/get_file_names/:user_id", (req, res) => {
                 res.send(files)
             }
         })
-
-
 });
+
+
+app.get("/get_user/:user_id", (req, res) => {
+    var file_list = glob(`public/${req.params.user_id}_*.+(jpg|png)`, options = { nocase: true }
+        , function (err, files) {
+            const user_exists = files.length > 0;
+            if (user_exists) {
+                for (let f of files) {
+                    fs.unlink(f, (err) => {
+                        if (err) {
+                            console.error(err);
+                            return
+                        }
+                    })
+                }
+                return
+            }
+        })
+})
+
 
 app.get("/results", (req, res) => {
     var file = fs.createReadStream("./pdfs/e-final-coverpage.pdf");
     file.pipe(res);
 });
-
-
-
 
 app.set("view engine", "ejs");
 app.listen(port, () => {
