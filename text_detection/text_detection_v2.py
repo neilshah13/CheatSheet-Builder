@@ -35,13 +35,15 @@ def _resize(newW, newH, image):
     # set the new width and height and then determine the ratio in change
     # for both the width and height
     H, W = image.shape[:2]
+    newH = float(newH)
     newH = int(newH)
+    newW = float(newW)
     newW = int(newW)
     rW = W / float(newW)
     rH = H / float(newH)
     # resize the image and grab the new image dimensions
     new_image = cv2.resize(image, (newW, newH))
-    return image
+    return new_image
 
 def text_detection(image,H,W):
     MIN_CONFIDENCE = 0.5
@@ -144,6 +146,8 @@ def text_detection(image,H,W):
         total_boxes+=1
         total_height += (endY-startY)
         
-    
-    score = total_height/total_boxes 
+    if total_boxes == 0:
+        score = 0
+    else:
+        score = total_height/total_boxes 
     return score

@@ -3,6 +3,8 @@ import axios from "axios";
 import React, { Component } from 'react';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
+const cors = require('cors');
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -19,7 +21,40 @@ class App extends Component {
         });
     }
 
-    uploadFiles = () => {
+    get_file_paths = async () => {
+        const file_paths = await axios.get(`http://localhost:5000/get_file_names/${this.state.user_id}`)
+        .then(res => {
+            console.log(res.data)
+            console.log("Done getting file paths!")
+            return res.data
+        }).catch((err)=> {
+            console.log(err)
+        })
+        return file_paths
+    }
+
+    get_image_information = async (file_paths) => {
+        const data_image = await axios.post('http://localhost:5000/get_image_information', file_paths)
+        .then(res => {
+            console.log(res)
+            console.log("IM HREEEEE")
+            console.log(res.data)
+            return res.data
+        }).catch((err)=> {
+            console.log(err)
+        })
+        return data_image
+    }
+    get_final_coordinates = async (data_image) => {
+        //test input to coordinates retrieval for images
+        axios.post('http://localhost:5000/get_final_coordinates', data_image)
+        .then(res => {
+            console.log(res)
+            //res.data
+        })
+    }
+    
+    uploadFiles = async () => {
         if (this.state.selectedFiles) {
             const data = new FormData();
             for (let i = 0; i < this.state.selectedFiles.length; i++) {
@@ -27,20 +62,16 @@ class App extends Component {
             }
             console.log(this.state.selectedFiles)
 
-            axios.post(`http://localhost:5000/upload/${this.state.user_id}`, data)
+            const uploading = await axios.post(`http://localhost:5000/upload/${this.state.user_id}`, data)
                 .then(res => {
                     console.log(res.statusText)
-                })
-
-            //Split into functions
-            //Hardcoded so far
-            const data_image = { "Image1": [787, 444], "Image2": [638, 359], "Image3": [512, 320] }
-
-            //test input to coordinates retrieval for images
-            axios.post('http://localhost:5000/get_final_coordinates', data_image)
-                .then(res => {
-                    console.log(res)
-                    //res.data
+                    return this.get_file_paths()
+                }).then(res => {
+                    return this.get_image_information(res)
+                }).then(res => {
+                    return this.get_final_coordinates(res)    
+                }).catch((err)=> {
+                    console.log(err)
                 })
         }
     }

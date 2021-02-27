@@ -22,11 +22,12 @@ const { reset } = require("nodemon");
 
 
 class Rect {
-    constructor(width, height) {
+    constructor(width, height, imagePath) {
         this.height = height;
         this.width = width;
         this.bot_left = null;
         this.top_right = null;
+        this.imagePath= imagePath;
     }
 
     set_top_right_coord(x, y) {
@@ -95,39 +96,31 @@ function merge_images(rectangles) {
 
     // Default export is a4 paper, portrait, using millimeters for units
     // Landscape export, 2×4 inches
-    const doc = new jsPDF.jsPDF('p', 'pt', [2480, 3508]);// ake sure the 2 width and height are the same
+    //2480, 3508
+    //1240, 2750]
+    const doc = new jsPDF.jsPDF('p', 'px', [1400, 3508]);// ake sure the 2 width and height are the same
 
     var images = []
     // for (i = 0; i < rectangles.length; i++) {
     //     images.push({src: './public/'})
     //     rectangles[i].bot_left
     // }
-    console.log(rectangles)
     //Hardcoded so far
+    console.log("Reached merged image!")
+    console.log(rectangles)
     for (i = 0; i < rectangles.length; i++) {
-        if (i == 0) {
-            images.push({ src: './public/test1.jpg', x: rectangles[i].bot_left[0], y: rectangles[i].bot_left[1] })
-
-        } else if (i == 1) {
-            images.push({ src: './public/test2.jpg', x: rectangles[i].bot_left[0], y: rectangles[i].bot_left[1] })
-        } else if (i == 2) {
-            images.push({ src: './public/test3.jpg', x: rectangles[i].bot_left[0], y: rectangles[i].bot_left[1] })
-        }
+        images.push({ src: rectangles[i].imagePath, x: rectangles[i].bot_left[0], y: rectangles[i].bot_left[1] })
     }
     console.log(images)
 
-    // var images = [
-    //     {src: './public/test1.jpg', x:0, y:0},
-    //     {src:'./public/test2.jpg', x:787, y:0}, 
-    //     {src: './public/test3.jpg', x:1425, y:0},
-    // ]
+    
 
     mergeImages(images, {
         Canvas: Canvas,
         Image: Image,
-        width: 2480, //A4 size
+        width: 2680, //A4 size
         height: 3508
-    }).then(b64 => doc.addImage(b64, "PNG", 0, 0)).then(b64 => doc.save("./Merged_Images/user1.pdf"));
+    }).then(b64 => doc.addImage(b64, "PNG", 0, 0)).then(b64 => doc.save("./pdfs/user1.pdf"));
 
     console.log("FINISHED!")
 }
@@ -137,20 +130,121 @@ app.get('/', function (req, res) {
     return res.send("Local Server OK")
 })
 
-app.post("/get_final_coordinates", function (req, res) {
-    const paper = new Rect(2480, 3508)
-    var rectangles = []
-    image_details = req.body;
-    for (var key in image_details) {
-        if (req.body.hasOwnProperty(key)) {
-            //do something with e.g. req.body[key]
-            console.log(image_details[key])
-            rectangles.push(new Rect(image_details[key][0], image_details[key][1]))
-        }
+app.post("/get_image_information", async function(req, res) {
+    console.log("image_inforation!!")
+    file_paths = req.body
+    image_data = []
+    for (let i = 0; i < file_paths.length; i++) {
+        data  = {"image_path": "../backend/"+file_paths[i], "image_name":i}
+        const image = await axios.post('http://127.0.0.1:1080/predict', data)
+            .then(res => {
+                image_data.push(res.data)
+            }).catch((err)=> {
+                console.log(err)
+            })
     }
-    arr = fit_rectangles(rectangles, paper)
-    //   var files = glob("./public/*.png")
-    //   console.log(files)
+    console.log(image_data)
+    return res.status(200).send(image_data)
+
+})
+
+app.post("/get_final_coordinates", async function(req, res){
+    const paper = new Rect(2480, 3508)
+    //const paper = new Rect(800, 1000)
+    var rectangles = []
+    var scores = []
+    image_details = req.body;
+
+    //console.log(image_details)
+
+    for (let i = 0; i < image_details.length; i++) {
+        scores.push(image_details[i]["prediction"][2])
+    }
+      
+    scores = scores.filter(element => ![0].includes(element));
+    if (scores.length == 0) {
+        min_score = 0
+    } else {
+
+        min_score = Math.max(30, Math.min(...scores))
+        
+    }
+
+    arr = []
+    var counter = 0
+    while (arr.length == 0) {
+
+        if (counter == 3){
+            break;
+        }
+
+        for (let i = 0; i < image_details.length; i++) {
+              //do something with e.g. req.body[key]
+              score = image_details[i]["prediction"][2]
+
+              if (min_score == 0) {
+                  score_multiplier = 1
+              } else if (score == 0) { 
+                score_multiplier = 1
+              }
+                else {
+                score_multiplier = (min_score/score)
+              }
+
+              
+              new_width = score_multiplier*image_details[i]["prediction"][0]
+              new_height = score_multiplier*image_details[i]["prediction"][1]
+              rect = new Rect(new_width, new_height,image_details[i]["image_path"])
+              image_details[i]["prediction"][0] = new_width
+              image_details[i]["prediction"][1] = new_height
+              image_details[i]["prediction"][2] = min_score
+              rectangles.push(rect)
+          }
+
+        arr = fit_rectangles(rectangles, paper)
+        //console.log("image_details")
+        //console.log(image_details)
+
+        if (arr.length == 0) {
+            rectangles = []
+            for (let i = 0; i < image_details.length; i++) {
+                  //do something with e.g. req.body[key]
+                  image_details[i]["prediction"][0] = image_details[i]["prediction"][0] * 0.90
+                  image_details[i]["prediction"][1] = image_details[i]["prediction"][1] * 0.90
+                
+              }
+
+        }
+        counter += 1
+    }
+    console.log("Finding here")
+    console.log(rectangles)
+    for (let i = 0; i < rectangles.length; i++){
+        // console.log("immage path!")
+        // console.log(rectangles[i].imagePath)
+        // console.log(rectangles[i].imagePath + "_resized")
+
+        // console.log("image path 2!!!")
+        const old_path = rectangles[i].imagePath
+        const new_image_path = old_path.slice(0, old_path.length-4) + "_resized" + old_path.slice(old_path.length-4,old_path.length)
+        console.log("BUTTERLY")
+        console.log(rectangles[i].height)
+        console.log(typeof(rectangles[i].height))
+        const data = {'image_path': rectangles[i].imagePath, 'new_path': new_image_path , "new_width": rectangles[i].width, "new_height": rectangles[i].height}
+        console.log(data)
+        const new_file_path = await axios.post("http://127.0.0.1:1080/resize", data)
+                                    .then(res => {
+                                        console.log("HELLO!!!")
+                                        console.log(res.data)
+                                        rectangles[i].imagePath = res.data.resized_image
+                                        console.log(rectangles[i])
+                                    }).catch((err)=> {
+                                        console.log(err)
+                                    })
+    }
+    // console.log("IN BETWEEN")
+    console.log(rectangles)
+
     merge_images(arr);
 })
 
@@ -184,16 +278,12 @@ app.get("/get_file_names/:user_id", (req, res) => {
                 res.send(files)
             }
         })
-
-
 });
 
 app.get("/results", (req, res) => {
     var file = fs.createReadStream("./pdfs/e-final-coverpage.pdf");
     file.pipe(res);
 });
-
-
 
 
 app.set("view engine", "ejs");
