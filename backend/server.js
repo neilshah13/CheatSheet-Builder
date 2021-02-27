@@ -23,6 +23,8 @@ app.get('/', function (req, res) {
     return res.send("Local Server OK")
 })
 
+app.post('')
+
 app.post('/upload', function (req, res) {
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
@@ -40,20 +42,21 @@ app.get('/results', function (req, res) {
     // defined file is for debugging
     var filePath = "./pdfs/e-final-coverpage.pdf"
     //
-    let resultPDF = fs.readFileSync(filePath);
-    res.contentType("application/pdf");
-    res.send(resultPDF)
+    // let resultPDF = fs.readFileSync(filePath);
+    // res.contentType("application/pdf");
+    // res.send(resultPDF)
 
 
-    // var resultPDF = fs.readFile(filePath,
-    //     function (err, data) {
-    //         res.contentType("application/pdf");
-    //         res.status(200).send(data);
-    //     });
+    var resultPDF = fs.readFile(filePath,
+        function (err, data) {
+            res.contentType("application/pdf");
+            res.status(200).send(data);
+        });
 });
 
-app.set("view engine", "ejs");
+// images files 
 
+app.set("view engine", "ejs");
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 });

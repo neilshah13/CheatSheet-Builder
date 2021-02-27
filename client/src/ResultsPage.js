@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Component, useState } from 'react';
 import RingLoader from "react-spinners/RingLoader";
 import { Document, Page, pdfjs } from 'react-pdf';
+
 import testPDF from './Armin.pdf'// debugging purposes
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -13,6 +14,7 @@ class ResultsPage extends Component {
             isLoading: null,
             results: null,
             previewPDF: null,
+            user_id: ''
         };
     }
 
@@ -22,6 +24,7 @@ class ResultsPage extends Component {
 
     componentDidMount = () => {
         this.setState({
+            user_id: this.state.history,
             isLoading: true,
             previewPDF: false
         });
@@ -30,12 +33,17 @@ class ResultsPage extends Component {
             .then(response => {
 
                 this.setState({
-                    results: response,
+                    results: response.data,
                     previewPDF: true,
                     isLoading: false
                 })
+                console.log(response)
 
-            }).catch(error => console.error(error))
+
+            }).catch(error => console.error(error)).then(() => {
+                console.log(this.state.results)
+            })
+
 
         // debugging purposes
         // this.setState({
@@ -45,8 +53,6 @@ class ResultsPage extends Component {
         // })
         // console.log(testPDF)
         // debugging purposes
-
-
     }
 
     render() {
