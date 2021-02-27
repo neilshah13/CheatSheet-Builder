@@ -2,7 +2,8 @@ import axios from 'axios';
 import React, { Component, useState } from 'react';
 import RingLoader from "react-spinners/RingLoader";
 import { Document, Page, pdfjs } from 'react-pdf';
-
+import './ResultsPage.css';
+import { Button } from 'ui-neumorphism'
 import testPDF from './Armin.pdf'// debugging purposes
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -89,12 +90,12 @@ class ResultsPage extends Component {
     render() {
 
         return (
-            <>
+            <header className="App-header">
                 {
                     this.state.isLoading ? <RingLoader size={150} color={"lightblue"} /> :
                         <p>done</p>
                 }
-                <div>
+                <div className="resultsContainer">
                     {this.state.previewPDF ?
                         <div>
                             <Document file={this.state.results} onLoadError={console.error}>
@@ -103,13 +104,12 @@ class ResultsPage extends Component {
                             </Document>
                         </div>
                         :
-                        <p>no res</p>
-
+                        <p>Oh mo</p>
                     }
-                    <button onClick={this.cleanUp}>go back</button>
-
+                    <Button className = "margin-top margin-left" onClick={this.download_pdf}>Download</Button>
+                    <Button className="margin-left" onClick={this.cleanUp}>go back</Button>
                 </div>
-            </>
+            </header >
 
         )
     }
