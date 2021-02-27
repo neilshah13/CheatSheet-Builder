@@ -1,0 +1,7 @@
+.previewContainer{
+    align-items: center;
+    padding: 3%;
+    max-height: 500px;
+    max-width : 900px;
+    object-fit: cover;
+}

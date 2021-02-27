@@ -4,6 +4,9 @@ import React, { Component } from 'react';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
 const cors = require('cors');
+import { Button, Card } from 'ui-neumorphism'
+import 'ui-neumorphism/dist/index.css'
+
 
 class App extends Component {
     constructor(props) {
@@ -86,9 +89,7 @@ class App extends Component {
             }
             return (
                 <>
-                    {filePreview.map(file => (
-                        <Preview fileTest={file[0]} fileName={file[1]}></Preview>
-                    ))}
+                    <Preview previewList={filePreview}></Preview>
                 </>
             )
         }
@@ -104,6 +105,7 @@ class App extends Component {
         // follows after user has selected image files (this.uploadFiles).
         // takes all input images and pass into algo; 
         // re-route to results page; loading screen while waiting for algo to run
+        this.uploadFiles();
         this.props.history.push(`/results/${this.state.user_id}`)
     }
 
@@ -111,18 +113,25 @@ class App extends Component {
         return (
 
             <header className="App-header">
-                <form onSubmit={this.fileSubmit}>
-                    <input type='file'
-                        multiple
-                        onChange={this.selectFiles}
-                        accept="image/jpeg, image/png" />
-                    <br />
-
+                <input
+                    ref="fileInput"
+                    type='file'
+                    multiple
+                    onChange={this.selectFiles}
+                    accept="image/jpeg, image/png"
+                    style={{ display: "none" }}
+                />
+                <Button onClick={() => this.refs.fileInput.click()} class="custom-file-upload">
+                    Upload Images Here
+                </Button>
+                <br />
+                <div id='filesContainer'>
                     {this.filePreview()}
-                    <button type='button' onClick={this.uploadFiles}>upload</button>
-                    <br />
-                    <button type='submit'>Create my cheatsheet</button>
-                </form >
+                </div>
+
+
+                <br />
+                <Button size='large' rounded color='var(--primary)' type='submit' onClick={this.fileSubmit}>Create my cheatsheet</Button>
             </header>
 
         )

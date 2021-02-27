@@ -1,29 +1,21 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
+import './Preview.css';
+import { Button, Card } from 'ui-neumorphism'
+import 'ui-neumorphism/dist/index.css'
 
-class Preview extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            file: null
-        }
-    }
 
-    componentDidMount() {
-        this.setState({
-            file: URL.createObjectURL(this.props.fileTest)
-        })
-    }
-
-    render() {
+const Preview = (props) => {
+    return props.previewList.map((val, idx) => {
+        const imgUrl = URL.createObjectURL(val[0])
+        const fileName = val[1]
         return (
-            <>
-                <img src={this.state.file}></img>
-                <p>
-                    File Name: {this.props.fileName}
-                </p>
-            </>
+            <Card>
+                <img className="previewContainer" src={imgUrl}></img>
+            </Card>
         )
-    }
+    })
 }
+
+
 
 export default Preview;

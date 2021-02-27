@@ -12,8 +12,6 @@ export default class Loading extends Component {
     render() {
         return (
             <>
-                {!this.state.done ?
-                }
             </>
         )
     }

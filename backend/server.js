@@ -113,7 +113,7 @@ function merge_images(rectangles) {
     }
     console.log(images)
 
-    
+
 
     mergeImages(images, {
         Canvas: Canvas,
@@ -280,11 +280,31 @@ app.get("/get_file_names/:user_id", (req, res) => {
         })
 });
 
-app.get("/results", (req, res) => {
-    var file = fs.createReadStream("./pdfs/e-final-coverpage.pdf");
+app.get("/get_user/:user_id", (req, res) => {
+    var file_list = glob(`public/${req.params.user_id}_*.+(jpg|png)`, options = { nocase: true }
+        , function (err, files) {
+            const user_exists = files.length > 0;
+            if (user_exists) {
+                for (let f of files) {
+                    fs.unlink(f, (err) => {
+                        if (err) {
+                            console.error(err);
+                            return
+                        }
+                    })
+                }
+                return
+            }
+        })
+})
+
+app.get("/results/:user_id", (req, res) => {
+    var file = fs.createReadStream(`./pdfs/${req.params.user_id}_results.pdf`);
     file.pipe(res);
 });
 
+app.get("/download/:user_id", (req, res) => {
+    res.download(`./pdfs/${req.params.user_id}_results.pdf`)
 
 app.set("view engine", "ejs");
 app.listen(port, () => {

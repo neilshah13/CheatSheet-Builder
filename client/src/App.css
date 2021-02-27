@@ -13,8 +13,21 @@
   }
 }
 
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  background-color: #0c162b;
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+
 .App-header {
-  background-color: #c0cfee;
+  background-color: #e0e5ec;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
