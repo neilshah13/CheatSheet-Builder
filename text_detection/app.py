@@ -17,7 +17,8 @@ class Predict(Resource):
 
         args = parser.parse_args()  # creates dict
 
-        out = {'prediction': predict(args['image_path'])}
+        out = {'prediction': predict(args['image_path']),
+            'image_path':args['image_path']}
 
         return out, 200
 
@@ -37,8 +38,9 @@ class Resize(Resource):
 
         args = parser.parse_args()  # creates dict
 
-        out = {'resized': resize_image(args['image_path'],args['new_width'],
-                                        args['new_height'],args['new_path'])}
+        out = {'resized_image': resize_image(args['image_path'],args['new_width'],
+                                        args['new_height'],args['new_path']),
+                'original_image':args['image_path']}
 
         return out, 200
 
