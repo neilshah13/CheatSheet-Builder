@@ -1,10 +1,12 @@
 import axios from 'axios';
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import RingLoader from "react-spinners/RingLoader";
-import { Document, Page, pdfjs } from 'react-pdf'
-import testPDF from "./e-final-coverpage.pdf"// debugging purposes
+import { Document, Page, pdfjs } from 'react-pdf';
+import testPDF from './Armin.pdf'// debugging purposes
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 class ResultsPage extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -48,7 +50,6 @@ class ResultsPage extends Component {
     }
 
     render() {
-        pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
         return (
             <>
@@ -56,14 +57,18 @@ class ResultsPage extends Component {
                     this.state.isLoading ? <RingLoader size={150} color={"lightblue"} /> :
                         <p>done</p>
                 }
-                {
-                    this.state.previewPDF ?
-                        <Document file={{ data: Buffer.from(this.state.results.data) }}>
-                            <Page pageNumber={1}></Page>
-                        </Document>
+                <div>
+                    {this.state.previewPDF ?
+                        <div>
+                            <Document file={testPDF} onLoadError={console.error}>
+                                Armin is cutest
+                                <Page pageNumber={1} />
+                            </Document>
+                        </div>
                         :
                         <p>no res</p>
-                }
+                    }
+                </div>
             </>
 
         )
