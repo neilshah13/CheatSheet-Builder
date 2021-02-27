@@ -131,15 +131,6 @@ function merge_images(rectangles) {
     console.log("FINISHED!")
 }
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname)
-    }
-})
-var upload = multer({ storage: storage }).array('file')
 
 app.get('/', function (req, res) {
     return res.send("Local Server OK")
@@ -162,7 +153,17 @@ app.post("/get_final_coordinates", function (req, res) {
     merge_images(arr);
 })
 
-app.post('/upload', function (req, res) {
+app.post('/upload/:user_id', function (req, res) {
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'public')
+        },
+        filename: function (req, file, cb) {
+            cb(null, req.params.user_id + '_' + file.originalname)
+        }
+    });
+    var upload = multer({ storage: storage }).array('file');
+
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             return res.status(500).json(err)
@@ -173,34 +174,13 @@ app.post('/upload', function (req, res) {
     })
 });
 
-<<<<<<< HEAD
-app.get('/results', function (req, res) {
-
-    // defined file is for debugging
-    var filePath = "./pdfs/e-final-coverpage.pdf"
-    //
-    // let resultPDF = fs.readFileSync(filePath);
-    // res.contentType("application/pdf");
-    // res.send(resultPDF)
-
-
-    var resultPDF = fs.readFile(filePath,
-        function (err, data) {
-            res.contentType("application/pdf");
-            res.status(200).send(data);
-        });
-});
-
-// images files 
-=======
 app.get("/results", (req, res) => {
     var file = fs.createReadStream("./pdfs/e-final-coverpage.pdf");
     file.pipe(res);
 });
 
 
-app.set("view engine", "ejs");
->>>>>>> d656f879188fb71113a5a02611133a90dec98204
+
 
 app.set("view engine", "ejs");
 app.listen(port, () => {

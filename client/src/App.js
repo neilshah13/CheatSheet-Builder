@@ -2,7 +2,7 @@ import Preview from './Preview';
 import axios from "axios";
 import React, { Component } from 'react';
 import './App.css';
-
+import { v4 as uuidv4 } from 'uuid';
 class App extends Component {
     constructor(props) {
         super(props);
@@ -27,21 +27,21 @@ class App extends Component {
             }
             console.log(this.state.selectedFiles)
 
-            axios.post('http://localhost:5000/upload', data)
+            axios.post(`http://localhost:5000/upload/${this.state.user_id}`, data)
                 .then(res => {
                     console.log(res.statusText)
                 })
 
             //Split into functions
             //Hardcoded so far
-            const data_image = {"Image1": [787,444], "Image2": [638,359],"Image3": [512,320]}
-            
+            const data_image = { "Image1": [787, 444], "Image2": [638, 359], "Image3": [512, 320] }
+
             //test input to coordinates retrieval for images
             axios.post('http://localhost:5000/get_final_coordinates', data_image)
-            .then(res => {
-                console.log(res)
-                //res.data
-            })
+                .then(res => {
+                    console.log(res)
+                    //res.data
+                })
         }
     }
 
@@ -61,6 +61,12 @@ class App extends Component {
                 </>
             )
         }
+    }
+
+    componentDidMount() {
+        this.setState({
+            user_id: uuidv4()
+        })
     }
 
     fileSubmit = () => {
