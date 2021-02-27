@@ -98,7 +98,7 @@ function merge_images(rectangles) {
     // Landscape export, 2×4 inches
     //2480, 3508
     //1240, 2750]
-    const doc = new jsPDF.jsPDF('p', 'px', [1400, 3508]);// ake sure the 2 width and height are the same
+    const doc = new jsPDF.jsPDF('p', 'px', [1400, 2008]);// ake sure the 2 width and height are the same
 
     var images = []
     // for (i = 0; i < rectangles.length; i++) {
@@ -106,6 +106,14 @@ function merge_images(rectangles) {
     //     rectangles[i].bot_left
     // }
     //Hardcoded so far
+
+    const image_url = rectangles[0].imagePath
+    const user_id = image_url.indexOf("../backend/public")
+    const first_ = image_url.indexOf("_")
+    const uuid = image_url.slice(("../backend/public").length + 1, first_)
+    console.log("Squirlte")
+    console.log(uuid)
+
     console.log("Reached merged image!")
     console.log(rectangles)
     for (i = 0; i < rectangles.length; i++) {
@@ -120,7 +128,7 @@ function merge_images(rectangles) {
         Image: Image,
         width: 2680, //A4 size
         height: 3508
-    }).then(b64 => doc.addImage(b64, "PNG", 0, 0)).then(b64 => doc.save("./pdfs/user1.pdf"));
+    }).then(b64 => doc.addImage(b64, "PNG", 0, 0)).then(b64 => doc.save(`./pdfs/${uuid}_results.pdf`));
 
     console.log("FINISHED!")
 }
@@ -133,6 +141,7 @@ app.get('/', function (req, res) {
 app.post("/get_image_information", async function(req, res) {
     console.log("image_inforation!!")
     file_paths = req.body
+    console.log(file_paths)
     image_data = []
     for (let i = 0; i < file_paths.length; i++) {
         data  = {"image_path": "../backend/"+file_paths[i], "image_name":i}
@@ -298,15 +307,23 @@ app.get("/get_user/:user_id", (req, res) => {
         })
 })
 
-app.get("/results/:user_id", (req, res) => {
+app.get("/results/:user_id", async (req, res) => {
+
+
     var file = fs.createReadStream(`./pdfs/${req.params.user_id}_results.pdf`);
-    file.pipe(res);
+
+    console.log(`./pdfs/${req.params.user_id}_results.pdf`)
+    console.log("charmandar")
+
+    const loading = await file.pipe(res);
 });
 
 app.get("/download/:user_id", (req, res) => {
     res.download(`./pdfs/${req.params.user_id}_results.pdf`)
+})
 
 app.set("view engine", "ejs");
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
-});
+})
+

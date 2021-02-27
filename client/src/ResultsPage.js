@@ -53,17 +53,16 @@ class ResultsPage extends Component {
         this.props.history.replace('/');
     }
 
-    componentDidMount = () => {
+    componentDidMount = async () =>  {
         this.setState({
-            user_id: this.props.match.params.user_id,
             isLoading: true,
             previewPDF: false
         });
-
-        // console.log(this.state.user_id)
-        axios.get(`http://localhost:5000/results/${this.state.user_id}`, {
+        console.log(this.props.match.params.user_id)
+        const loading = await axios.get(`http://localhost:5000/results/${this.props.match.params.user_id}`, {
             responseType: "blob"
         }).then(response => {
+            console.log("BUBUUBU")
             //Create a Blob from the PDF Stream
             // console.log("???")
             const file = new Blob([response.data], {

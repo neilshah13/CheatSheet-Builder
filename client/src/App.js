@@ -3,9 +3,10 @@ import axios from "axios";
 import React, { Component } from 'react';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
-const cors = require('cors');
 import { Button, Card } from 'ui-neumorphism'
 import 'ui-neumorphism/dist/index.css'
+const cors = require('cors');
+
 
 
 class App extends Component {
@@ -101,12 +102,13 @@ class App extends Component {
         })
     }
 
-    fileSubmit = () => {
+    fileSubmit = async () => {
         // follows after user has selected image files (this.uploadFiles).
         // takes all input images and pass into algo; 
         // re-route to results page; loading screen while waiting for algo to run
-        this.uploadFiles();
-        this.props.history.push(`/results/${this.state.user_id}`)
+        const loading = await this.uploadFiles();
+        await new Promise(r => setTimeout(r, 20000));
+        const wait = await this.props.history.push(`/results/${this.state.user_id}`)
     }
 
     render() {
