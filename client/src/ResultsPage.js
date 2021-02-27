@@ -22,14 +22,6 @@ class ResultsPage extends Component {
         axios.get('http://localhost:5000/results')
     }
 
-    cleanUp = () => {
-        axios.get(`http://localhost:5000/get_user/${this.state.user_id}`)
-            .then(response => {
-                console.log("Deleted...")
-            })
-        this.props.history.replace('/');
-    }
-
 
     viewHandler = async () => {
         axios(`http://localhost:4000/pdf`, {
@@ -108,8 +100,6 @@ class ResultsPage extends Component {
                         <p>no res</p>
                     }
                 </div>
-                <br />
-                <button onClick={this.cleanUp}>Return back</button>
             </>
 
         )

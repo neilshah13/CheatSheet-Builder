@@ -10,7 +10,7 @@ class App extends Component {
         super(props);
         this.state = {
             selectedFiles: null, // user-selected files
-            fileInfos: [],
+            fileInfos: []
         }
     }
 
@@ -23,16 +23,14 @@ class App extends Component {
 
     uploadFiles = () => {
         if (this.state.selectedFiles) {
-
             const data = new FormData();
             for (let i = 0; i < this.state.selectedFiles.length; i++) {
-                data.append(this.state.user_id, this.state.selectedFiles[i]);
+                data.append('file', this.state.selectedFiles[i]);
             }
-
+            console.log(this.state.selectedFiles)
 
             axios.post(`http://localhost:5000/upload/${this.state.user_id}`, data)
                 .then(res => {
-                    console.log(res.user_id)
                     console.log(res.statusText)
                 })
 
@@ -75,16 +73,8 @@ class App extends Component {
         // follows after user has selected image files (this.uploadFiles).
         // takes all input images and pass into algo; 
         // re-route to results page; loading screen while waiting for algo to run
-        this.uploadFiles()
+        this.uploadFiles();
         this.props.history.push(`/results/${this.state.user_id}`)
-
-    }
-
-    componentDidMount() {
-        const id = uuidv4()
-        this.setState({
-            user_id: id
-        })
     }
 
     render() {
