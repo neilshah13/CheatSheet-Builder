@@ -204,8 +204,8 @@ app.get("/get_user/:user_id", (req, res) => {
         })
 })
 
-app.get("/results", (req, res) => {
-    var file = fs.createReadStream("./pdfs/e-final-coverpage.pdf");
+app.get("/results/:user_id", (req, res) => {
+    var file = fs.createReadStream(`./pdfs/${req.params.user_id}_Armin.pdf`);
     file.pipe(res);
 });
 
