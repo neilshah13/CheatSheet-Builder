@@ -1,29 +1,23 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
+import './Preview.css';
 
-class Preview extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            file: null
-        }
-    }
-
-    componentDidMount() {
-        this.setState({
-            file: URL.createObjectURL(this.props.fileTest)
-        })
-    }
-
-    render() {
+const Preview = (props) => {
+    return props.previewList.map((val, idx) => {
+        const imgUrl = URL.createObjectURL(val[0])
+        const fileName = val[1]
         return (
             <>
-                <img src={this.state.file}></img>
-                <p>
-                    File Name: {this.props.fileName}
-                </p>
+                <section class="previewContainer">
+                    <img src={imgUrl}></img>
+                    <p>File Name: {fileName}</p>
+                    <button onClick={() => props.delete(val)}> X</button>
+                </section>
             </>
         )
-    }
+    })
+
 }
+
+
 
 export default Preview;

@@ -17,7 +17,8 @@ const jsPDF = require("jspdf")
 //const require = createRequire(import.meta.url);
 const mergeImages = require('merge-images');
 const { Canvas, Image } = require('canvas');
-var glob = require("glob")
+var glob = require("glob");
+const { reset } = require("nodemon");
 
 
 class Rect {
@@ -90,11 +91,11 @@ function create_bin(rectangles, bin, current_bin_level) {
     return remaining_rec
 }
 
-function merge_images(rectangles){
+function merge_images(rectangles) {
 
     // Default export is a4 paper, portrait, using millimeters for units
     // Landscape export, 2×4 inches
-    const doc = new jsPDF.jsPDF('p', 'pt', [2480,  3508]);// ake sure the 2 width and height are the same
+    const doc = new jsPDF.jsPDF('p', 'pt', [2480, 3508]);// ake sure the 2 width and height are the same
 
     var images = []
     // for (i = 0; i < rectangles.length; i++) {
@@ -104,13 +105,13 @@ function merge_images(rectangles){
     console.log(rectangles)
     //Hardcoded so far
     for (i = 0; i < rectangles.length; i++) {
-        if (i==0) {
-            images.push({src: './public/test1.jpg', x:rectangles[i].bot_left[0], y:rectangles[i].bot_left[1]})
-        
-        } else if (i==1) {
-            images.push({src: './public/test2.jpg', x:rectangles[i].bot_left[0], y:rectangles[i].bot_left[1]})
-        } else if (i==2) {
-            images.push({src: './public/test3.jpg', x:rectangles[i].bot_left[0], y:rectangles[i].bot_left[1]})
+        if (i == 0) {
+            images.push({ src: './public/test1.jpg', x: rectangles[i].bot_left[0], y: rectangles[i].bot_left[1] })
+
+        } else if (i == 1) {
+            images.push({ src: './public/test2.jpg', x: rectangles[i].bot_left[0], y: rectangles[i].bot_left[1] })
+        } else if (i == 2) {
+            images.push({ src: './public/test3.jpg', x: rectangles[i].bot_left[0], y: rectangles[i].bot_left[1] })
         }
     }
     console.log(images)
@@ -122,47 +123,48 @@ function merge_images(rectangles){
     // ]
 
     mergeImages(images, {
-    Canvas: Canvas,
-    Image: Image,
-    width: 2480, //A4 size
-    height: 3508
-    }).then(b64 => doc.addImage(b64, "PNG", 0,0)).then(b64 => doc.save("./Merged_Images/user1.pdf"));
+        Canvas: Canvas,
+        Image: Image,
+        width: 2480, //A4 size
+        height: 3508
+    }).then(b64 => doc.addImage(b64, "PNG", 0, 0)).then(b64 => doc.save("./Merged_Images/user1.pdf"));
 
     console.log("FINISHED!")
 }
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname)
-    }
-})
-var upload = multer({ storage: storage }).array('file')
 
 app.get('/', function (req, res) {
     return res.send("Local Server OK")
 })
 
-app.post("/get_final_coordinates", function(req, res){
+app.post("/get_final_coordinates", function (req, res) {
     const paper = new Rect(2480, 3508)
     var rectangles = []
     image_details = req.body;
-    for(var key in image_details) {
-        if(req.body.hasOwnProperty(key)){
-          //do something with e.g. req.body[key]
-          console.log(image_details[key])
-          rectangles.push(new Rect(image_details[key][0], image_details[key][1]))
-        } 
-      }
+    for (var key in image_details) {
+        if (req.body.hasOwnProperty(key)) {
+            //do something with e.g. req.body[key]
+            console.log(image_details[key])
+            rectangles.push(new Rect(image_details[key][0], image_details[key][1]))
+        }
+    }
     arr = fit_rectangles(rectangles, paper)
     //   var files = glob("./public/*.png")
     //   console.log(files)
     merge_images(arr);
 })
 
-app.post('/upload', function (req, res) {
+app.post('/upload/:user_id', function (req, res) {
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'public')
+        },
+        filename: function (req, file, cb) {
+            cb(null, req.params.user_id + '_' + file.originalname)
+        }
+    });
+    var upload = multer({ storage: storage }).array('file');
+
     upload(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             return res.status(500).json(err)
@@ -173,14 +175,43 @@ app.post('/upload', function (req, res) {
     })
 });
 
+app.get("/get_file_names/:user_id", (req, res) => {
+    var file_list = glob(`public/${req.params.user_id}_*.+(jpg|png)`, options = { nocase: true }
+        , function (err, files) {
+            if (err) {
+                console.log(err)
+            } else {
+                res.send(files)
+            }
+        })
+});
+
+
+app.get("/get_user/:user_id", (req, res) => {
+    var file_list = glob(`public/${req.params.user_id}_*.+(jpg|png)`, options = { nocase: true }
+        , function (err, files) {
+            const user_exists = files.length > 0;
+            if (user_exists) {
+                for (let f of files) {
+                    fs.unlink(f, (err) => {
+                        if (err) {
+                            console.error(err);
+                            return
+                        }
+                    })
+                }
+                return
+            }
+        })
+})
+
+
 app.get("/results", (req, res) => {
     var file = fs.createReadStream("./pdfs/e-final-coverpage.pdf");
     file.pipe(res);
 });
 
-
 app.set("view engine", "ejs");
-
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 });

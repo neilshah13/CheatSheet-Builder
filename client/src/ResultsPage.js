@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Component, useState } from 'react';
 import RingLoader from "react-spinners/RingLoader";
 import { Document, Page, pdfjs } from 'react-pdf';
+
 import testPDF from './Armin.pdf'// debugging purposes
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -13,11 +14,20 @@ class ResultsPage extends Component {
             isLoading: null,
             results: null,
             previewPDF: null,
+            user_id: ''
         };
     }
 
     getResultsPDF = () => {
         axios.get('http://localhost:5000/results')
+    }
+
+    cleanUp = () => {
+        axios.get(`http://localhost:5000/get_user/${this.state.user_id}`)
+            .then(response => {
+                console.log("Deleted...")
+            })
+        this.props.history.replace('/');
     }
 
 
@@ -44,9 +54,11 @@ class ResultsPage extends Component {
 
     componentDidMount = () => {
         this.setState({
+            user_id: this.props.match.params.user_id,
             isLoading: true,
             previewPDF: false
         });
+
 
         axios(`http://localhost:5000/results`, {
             method: "GET",
@@ -67,8 +79,13 @@ class ResultsPage extends Component {
                 isLoading: false
             })
         }).catch(error => {
-                console.log(error);
+            console.log(error);
         });
+
+        axios.get(`http://localhost:5000/get_file_names/${this.state.user_id}`)
+            .then(response => {
+                console.log(response)
+            })
     }
 
     render() {
@@ -91,6 +108,8 @@ class ResultsPage extends Component {
                         <p>no res</p>
                     }
                 </div>
+                <br />
+                <button onClick={this.cleanUp}>Return back</button>
             </>
 
         )
