@@ -3,10 +3,7 @@ import axios from "axios";
 import React, { Component } from 'react';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 
 class App extends Component {
     constructor(props) {
@@ -60,14 +57,9 @@ class App extends Component {
             for (let file of selectedFiles) {
                 filePreview.push([file, file.name]);
             }
-            console.log(filePreview);
             return (
                 <>
                     <Preview previewList={filePreview}></Preview>
-                    {/* {filePreview.map(file => (
-                        <Preview preview={{ imgSrc: file[0], fileName: file[1] }}></Preview>
-                    ))
-                    } */}
                 </>
             )
         }
@@ -99,28 +91,25 @@ class App extends Component {
         return (
 
             <header className="App-header">
-                <form >
-
-                    <label for='uploadButton' class="custom-file-upload">
-                        Upload Images Here
+                <label for='uploadButton' class="custom-file-upload">
+                    Upload Images Here
                         </label>
-                    <input
-                        id='uploadButton'
-                        type='file'
-                        multiple
-                        onChange={this.selectFiles}
-                        accept="image/jpeg, image/png"
-                    />
-                    <br />
+                <input
+                    id='uploadButton'
+                    type='file'
+                    multiple
+                    onChange={this.selectFiles}
+                    accept="image/jpeg, image/png"
+                />
+                <br />
 
-                    <div id='filesContainer'>
-                        {this.filePreview()}
-                    </div>
+                <div id='filesContainer'>
+                    {this.filePreview()}
+                </div>
 
 
-                    <br />
-                    <button type='submit' onClick={this.fileSubmit}>Create my cheatsheet</button>
-                </form >
+                <br />
+                <button type='submit' onClick={this.fileSubmit}>Create my cheatsheet</button>
             </header>
 
         )
