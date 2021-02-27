@@ -44,6 +44,7 @@ class ResultsPage extends Component {
                 console.log(error);
             });
     };
+
     cleanUp = () => {
         axios.get(`http://localhost:5000/get_user/${this.state.user_id}`)
             .then(response => {
@@ -51,6 +52,7 @@ class ResultsPage extends Component {
             })
         this.props.history.replace('/');
     }
+
     componentDidMount = () => {
         this.setState({
             user_id: this.props.match.params.user_id,
@@ -58,13 +60,12 @@ class ResultsPage extends Component {
             previewPDF: false
         });
 
-
-        axios(`http://localhost:5000/results`, {
-            method: "GET",
+        // console.log(this.state.user_id)
+        axios.get(`http://localhost:5000/results/${this.state.user_id}`, {
             responseType: "blob"
-            //Force to receive data in a Blob Format
         }).then(response => {
             //Create a Blob from the PDF Stream
+            // console.log("???")
             const file = new Blob([response.data], {
                 type: "application/pdf"
             });
@@ -81,8 +82,34 @@ class ResultsPage extends Component {
             console.log(error);
         });
 
+        // axios(`http://localhost:5000/results/${this.state.user_id}`, {
+        //     method: "GET",
+        //     responseType: "blob"
+        //     //Force to receive data in a Blob Format
+        // }).then(response => {
+        //     //Create a Blob from the PDF Stream
+        //     console.log("???")
+        //     const file = new Blob([response.data], {
+        //         type: "application/pdf"
+        //     });
+        //     //Build a URL from the file
+        //     const fileURL = URL.createObjectURL(file);
+        //     console.log("fileURL")
+        //     console.log(fileURL)
+        //     this.setState({
+        //         results: fileURL,
+        //         previewPDF: true,
+        //         isLoading: false
+        //     })
+        // }).catch(error => {
+        //     console.log(error);
+        // });
+
+        // console.log('two')
+
         axios.get(`http://localhost:5000/get_file_names/${this.state.user_id}`)
             .then(response => {
+                console.log(">>>>")
                 console.log(response)
             })
     }
