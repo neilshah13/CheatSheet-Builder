@@ -106,9 +106,12 @@ class App extends Component {
         // follows after user has selected image files (this.uploadFiles).
         // takes all input images and pass into algo; 
         // re-route to results page; loading screen while waiting for algo to run
+        //await new Promise(r => setTimeout(r, 20000));
         const loading = await this.uploadFiles();
-        await new Promise(r => setTimeout(r, 20000));
+
         const wait = await this.props.history.push(`/results/${this.state.user_id}`)
+
+
     }
 
     render() {

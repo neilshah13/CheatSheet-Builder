@@ -59,7 +59,7 @@ class ResultsPage extends Component {
             previewPDF: false
         });
         console.log(this.props.match.params.user_id)
-        const loading = await axios.get(`http://localhost:5000/results/${this.props.match.params.user_id}`, {
+        const loading = await axios.get(`http://localhost:5000/results_pdf/${this.props.match.params.user_id}`, {
             responseType: "blob"
         }).then(response => {
             console.log("BUBUUBU")

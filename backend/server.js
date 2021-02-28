@@ -241,7 +241,7 @@ app.post("/get_final_coordinates", async function(req, res){
         console.log(typeof(rectangles[i].height))
         const data = {'image_path': rectangles[i].imagePath, 'new_path': new_image_path , "new_width": rectangles[i].width, "new_height": rectangles[i].height}
         console.log(data)
-        const new_file_path = await axios.post("http://127.0.0.1:1080/resize", data)
+        const new_file_path = axios.post("http://127.0.0.1:1080/resize", data)
                                     .then(res => {
                                         console.log("HELLO!!!")
                                         console.log(res.data)
@@ -307,7 +307,7 @@ app.get("/get_user/:user_id", (req, res) => {
         })
 })
 
-app.get("/results/:user_id", async (req, res) => {
+app.get("/results_pdf/:user_id", async (req, res) => {
 
 
     var file = fs.createReadStream(`./pdfs/${req.params.user_id}_results.pdf`);
