@@ -4,6 +4,11 @@
 
 ### Checkout our [Devpost!](https://devpost.com/software/cheatsheet-builder-t0iwer)
 
+<img src="https://user-images.githubusercontent.com/50938891/130049919-27b2fecb-7a93-4e45-a8ea-02f790f54e0e.png" width=500/>
+
+<img src="https://user-images.githubusercontent.com/50938891/130049998-1d02d78e-49bf-4df9-b420-cc612b8f19b7.png" width=500/>
+
+
 Tired of spending hours formatting Word docs to make it perfect just to have a simple resize change all the output? Our app takes in your images and outputs a perfect pdf using ML and Binning Algos!
 
 ## Inspiration
