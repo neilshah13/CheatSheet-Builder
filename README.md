@@ -1,6 +1,6 @@
 # Cheat Sheet Builder
 
-## Second Runner Up at iNTUition V7.0 - Open Category
+## First Runner Up at iNTUition V7.0 - Open Category
 
 ### Checkout our [Devpost!](https://devpost.com/software/cheatsheet-builder-t0iwer)
 
